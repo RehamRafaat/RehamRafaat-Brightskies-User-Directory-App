@@ -1,61 +1,80 @@
-# Brightskies-directory-app
+# Brightskies Directory App
 
-Build a User Directory App
+A modern User Directory application built using **Next.js**, designed for performance, scalability, and clean UI.
 
-## How to use it :
+---
 
-- You will need the VScode.
-- You need to install latest Node Version 22.17.1
-- You need to install latest npm Version 11.4.2
+## 🚀 Getting Started
 
-### Install Packages
-- In Terminal of the project run the command 
+### ✅ Prerequisites
+
+Ensure you have the following installed on your machine:
+
+- **VS Code** or any modern code editor.
+- **Node.js** version `22.17.1`  
+- **npm** version `11.4.2`
+
+### 📦 Installation
+
+To install the project dependencies, run the following command in the terminal:
 
 ```bash
 npm i install
 ```
 
-### To run the project
+### 💻 Run the App (Development)
 
-- In Terminal of project in dev environment run the command 
-
-```bash
-npm run dev 
-```
-
-### To build the project
-- In Terminal of project in production environment run the command 
+To start the development server:
 
 ```bash
-npm run build 
+npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Once the server is running, open your browser and navigate to:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+[http://localhost:3000](http://localhost:3000)
 
-### Spent Time 
+> You can start editing the project by modifying the file: `app/page.tsx`. Changes will reflect in real-time.
 
-- 1.75 hours
+### 📦 Build the App (Production)
 
-## FrameWorks used
+To build the project for production:
 
-- NextJS
+```bash
+npm run build
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Library used
+## 🕒 Time Spent
 
--  [Shadcn Documentation](https://ui.shadcn.com/) - learn about Shadcn ui library.
--  [Tailwind Css Documentation](https://tailwindcss.com/) - learn about Tailwind Css library.
--  [Tanstack query Documentation](https://tanstack.com/query/latest) - learn about Tanstack query library.
--  [Zod Validator Documentation](https://zod.dev/) - learn about Zod Validator library.
+- **Total Development Time**: *1.75 hours*
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## 🛠️ Technologies Used
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Framework
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- [**Next.js**](https://nextjs.org/) – React framework for production.
+
+> This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to optimize and load [Geist](https://vercel.com/font), a modern typeface by Vercel.
+
+### Libraries & Tools
+
+- [**shadcn/ui**](https://ui.shadcn.com/) – Component library built on top of Tailwind CSS and Radix UI.
+- [**Tailwind CSS**](https://tailwindcss.com/) – Utility-first CSS framework.
+- [**TanStack Query**](https://tanstack.com/query/latest) – Powerful data-fetching library.
+- [**Zod**](https://zod.dev/) – TypeScript-first schema validation.
+
+---
+
+## 📘 Learn More
+
+To dive deeper into the technologies used:
+
+- [Next.js Documentation](https://nextjs.org/docs) – Explore the full range of Next.js features.
+- [Interactive Next.js Tutorial](https://nextjs.org/learn) – Hands-on guide to building apps with Next.js.
+- [Next.js GitHub Repository](https://github.com/vercel/next.js) – Open-source repo for contributions and issues.
+
+---
