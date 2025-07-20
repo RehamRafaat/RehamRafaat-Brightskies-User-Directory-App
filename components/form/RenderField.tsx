@@ -8,14 +8,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Control, FieldValues, Path } from "react-hook-form";
-
-type RenderFieldProps<T extends FieldValues> = {
-  control: Control<T>;
-  name: Path<T>;
-  label: string;
-  placeholder: string;
-};
+import {  FieldValues } from "react-hook-form";
+import { RenderFieldProps } from "@/types/renderedField"
 
 export function RenderField<T extends FieldValues>({
   control,
