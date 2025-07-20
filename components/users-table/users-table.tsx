@@ -4,14 +4,14 @@ import * as React from "react"
 import {
   ColumnDef,
   ColumnFiltersState,
+  SortingState,
+  VisibilityState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  SortingState,
   useReactTable,
-  VisibilityState,
 } from "@tanstack/react-table"
 import { useQuery } from "@tanstack/react-query"
 import { ArrowUpDown, ChevronDown } from "lucide-react"
@@ -32,18 +32,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import Spinner from "../Spinner/Spinner"
+import Spinner from "@/components/Spinner/Spinner"
+import { User } from "@/types/user"
 
-type User = {
-  id: number
-  name: string
-  email: string
-  company: {
-    name: string
-  }
-}
+// -------------------------------------
+// Column Definitions
+// -------------------------------------
 
-const columns: ColumnDef<User>[] = [
+const getColumns = (): ColumnDef<User>[] => [
   {
     accessorKey: "name",
     header: "Name",
@@ -59,7 +55,9 @@ const columns: ColumnDef<User>[] = [
         Email <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
-    cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
+    cell: ({ row }) => (
+      <div className="lowercase">{row.getValue("email")}</div>
+    ),
   },
   {
     accessorKey: "company.name",
@@ -68,30 +66,36 @@ const columns: ColumnDef<User>[] = [
   },
 ]
 
-export default function UsersTable() {
+// -------------------------------------
+// Component
+// -------------------------------------
+
+const UsersTable: React.FC = () => {
   const [sorting, setSorting] = React.useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
+  const [filters, setFilters] = React.useState<ColumnFiltersState>([])
+  const [visibility, setVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
 
   const { data = [], isPending, isError, error } = useQuery<User[]>({
     queryKey: ["users"],
     queryFn: () =>
-      fetch("https://jsonplaceholder.typicode.com/users").then((res) => res.json()),
+      fetch("https://jsonplaceholder.typicode.com/users").then((res) =>
+        res.json()
+      ),
   })
 
   const table = useReactTable({
     data,
-    columns,
+    columns: getColumns(),
     state: {
       sorting,
-      columnFilters,
-      columnVisibility,
+      columnFilters: filters,
+      columnVisibility: visibility,
       rowSelection,
     },
     onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-    onColumnVisibilityChange: setColumnVisibility,
+    onColumnFiltersChange: setFilters,
+    onColumnVisibilityChange: setVisibility,
     onRowSelectionChange: setRowSelection,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -99,8 +103,19 @@ export default function UsersTable() {
     getSortedRowModel: getSortedRowModel(),
   })
 
-  if (isPending) return <div className="p-4"><Spinner /></div>
-  if (isError) return <div className="p-4 text-red-500">Error: {error.message}</div>
+  if (isPending) {
+    return (
+      <div className="p-4">
+        <Spinner />
+      </div>
+    )
+  }
+
+  if (isError) {
+    return (
+      <div className="p-4 text-red-500">Error: {error.message}</div>
+    )
+  }
 
   return (
     <div className="w-[90%] m-auto mt-5">
@@ -108,8 +123,8 @@ export default function UsersTable() {
         <Input
           placeholder="Filter names..."
           value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("name")?.setFilterValue(event.target.value)
+          onChange={(e) =>
+            table.getColumn("name")?.setFilterValue(e.target.value)
           }
           className="max-w-sm"
         />
@@ -121,20 +136,26 @@ export default function UsersTable() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            {table.getAllColumns().filter(c => c.getCanHide()).map((column) => (
-              <DropdownMenuCheckboxItem
-                key={column.id}
-                className="capitalize"
-                checked={column.getIsVisible()}
-                onCheckedChange={(value) => column.toggleVisibility(!!value)}
-              >
-                {column.id}
-              </DropdownMenuCheckboxItem>
-            ))}
+            {table
+              .getAllColumns()
+              .filter((column) => column.getCanHide())
+              .map((column) => (
+                <DropdownMenuCheckboxItem
+                  key={column.id}
+                  className="capitalize"
+                  checked={column.getIsVisible()}
+                  onCheckedChange={(value) =>
+                    column.toggleVisibility(!!value)
+                  }
+                >
+                  {column.id}
+                </DropdownMenuCheckboxItem>
+              ))}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
 
+      {/* Table */}
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -144,14 +165,17 @@ export default function UsersTable() {
                   <TableHead key={header.id}>
                     {header.isPlaceholder
                       ? null
-                      : flexRender(header.column.columnDef.header, header.getContext())}
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                   </TableHead>
                 ))}
               </TableRow>
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+            {table.getRowModel().rows.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
@@ -159,14 +183,17 @@ export default function UsersTable() {
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
                     </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
+                <TableCell colSpan={table.getAllColumns().length} className="h-24 text-center">
                   No users found.
                 </TableCell>
               </TableRow>
@@ -177,3 +204,5 @@ export default function UsersTable() {
     </div>
   )
 }
+
+export default UsersTable

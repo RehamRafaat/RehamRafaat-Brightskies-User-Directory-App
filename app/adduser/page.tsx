@@ -1,37 +1,34 @@
-"use client"
+"use client";
 
-import { z } from "zod"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useMutation } from "@tanstack/react-query"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form"
-import { useRouter } from "next/navigation"
-import { toast } from "sonner"
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
+import { Button } from "@/components/ui/button";
+import { Form } from "@/components/ui/form";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { useCallback } from "react";
 
-const formSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  email: z.string().email("Invalid email"),
-  company: z.string().min(1, "Company is required"),
-})
+import { userSchema, UserFormData } from "@/schemas/userSchema";
+import { RenderField } from "@/components/form/RenderField";
+import Spinner from "@/components/Spinner/Spinner";
 
-type FormData = z.infer<typeof formSchema>
+const defaultValues: UserFormData = {
+  name: "",
+  email: "",
+  company: "",
+};
 
 export default function AddUserPage() {
-  const router = useRouter()
+  const router = useRouter();
 
-  const form = useForm<FormData>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: "",
-      email: "",
-      company: "",
-    },
-  })
+  const form = useForm<UserFormData>({
+    resolver: zodResolver(userSchema),
+    defaultValues,
+  });
 
   const mutation = useMutation({
-    mutationFn: async (data: FormData) => {
+    mutationFn: async (data: UserFormData) => {
       const res = await fetch("https://jsonplaceholder.typicode.com/users", {
         method: "POST",
         body: JSON.stringify({
@@ -40,77 +37,62 @@ export default function AddUserPage() {
           company: { name: data.company },
         }),
         headers: {
-          "Content-type": "application/json; charset=UTF-8",
+          "Content-Type": "application/json",
         },
-      })
-      if (!res.ok) throw new Error("Failed to create user")
-      return res.json()
+      });
+
+      if (!res.ok) throw new Error("Failed to create user");
+      return res.json();
     },
     onSuccess: () => {
-      toast.success("User created successfully!")
-      router.push("/")
+      toast.success("User created successfully!");
+      router.push("/");
     },
     onError: () => {
-      toast.error("Something went wrong.")
+      toast.error("Something went wrong.");
     },
-  })
+  });
 
-  function onSubmit(values: FormData) {
-    mutation.mutate(values)
-  }
+  const onSubmit = useCallback(
+    (values: UserFormData) => {
+      mutation.mutate(values);
+    },
+    [mutation]
+  );
 
   return (
     <div className="p-6 max-w-md mx-auto my-5">
       <h2 className="text-xl font-semibold mb-4">Add New User</h2>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          <FormField
+          <RenderField
             control={form.control}
             name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Name</FormLabel>
-                <FormControl>
-                  <Input placeholder="Enter name" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            label="Name"
+            placeholder="Enter name"
           />
-
-          <FormField
+          <RenderField
             control={form.control}
             name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input placeholder="Enter email" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            label="Email"
+            placeholder="Enter email"
           />
-
-          <FormField
+          <RenderField
             control={form.control}
             name="company"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Company</FormLabel>
-                <FormControl>
-                  <Input placeholder="Enter company name" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            label="Company"
+            placeholder="Enter company name"
           />
 
-          <Button type="submit" disabled={mutation.isPending}>
-            {mutation.isPending ? "Adding..." : "Add User"}
+          <Button
+            type="submit"
+            disabled={mutation.isPending}
+            className="w-full"
+          >
+            {mutation.isPending ? <Spinner /> : "Add User"}
           </Button>
         </form>
       </Form>
     </div>
-  )
+  );
 }

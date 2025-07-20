@@ -1,16 +1,15 @@
-// Spinner.tsx
-import React from "react"
-import "./Spinner.css" // Make sure this file contains your original CSS
+import React from "react";
+import styles from"./Spinner.module.css";
 
 const Spinner: React.FC = () => {
   return (
     <div className="preload">
-      <div className="loader" id="loader2" />
-      <div className="loader" id="loader3" />
-      <div className="loader" id="loader4" />
-      <div className="loader" id="loader5" />
+      <div className={styles.loader} id={styles.loader2} />
+      <div className={styles.loader} id={styles.loader3} />
+      <div className={styles.loader} id={styles.loader4} />
+      <div className={styles.loader} id={styles.loader5} />
     </div>
-  )
-}
+  );
+};
 
-export default Spinner
+export default Spinner;
